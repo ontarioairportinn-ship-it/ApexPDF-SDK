@@ -1,0 +1,51 @@
+name: ApexPDF SDK CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  native-windows-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Release
+        run: cmake --preset windows-x64-release
+      - name: Build Release
+        run: cmake --build --preset windows-x64-release
+      - name: Test C and C++ ABI consumers
+        run: ctest --preset windows-x64-release
+      - name: Package native SDK
+        run: cpack --preset windows-x64-release
+      - name: Upload native SDK package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ApexPdfSdk-windows-x64
+          path: artifacts/windows-x64-release/ApexPdfSdk-*.zip
+          if-no-files-found: error
+
+  native-windows-x64-asan:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AddressSanitizer
+        run: cmake --preset windows-x64-asan
+      - name: Build AddressSanitizer
+        run: cmake --build --preset windows-x64-asan
+      - name: Test AddressSanitizer
+        run: ctest --preset windows-x64-asan
+
+  native-windows-x64-analysis:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure native analysis
+        run: cmake --preset windows-x64-analyze
+      - name: Run native analysis
+        run: cmake --build --preset windows-x64-analyze
