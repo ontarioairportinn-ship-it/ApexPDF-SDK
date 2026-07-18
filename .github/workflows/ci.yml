@@ -33,7 +33,7 @@ jobs:
           New-Item -ItemType File -Force artifacts/evidence/managed-lifecycle.txt | Out-Null
           Copy-Item artifacts/windows-x64-release/ApexPdfSdk.dll tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/
           $env:APX_MANAGED_TEST_LOG = (Resolve-Path artifacts/evidence/managed-lifecycle.txt).Path
-          & tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.exe *>&1 |
+          dotnet tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll *>&1 |
             Tee-Object artifacts/evidence/managed-lifecycle.txt
           if ($LASTEXITCODE -ne 0) { throw "Managed lifecycle test failed: $LASTEXITCODE" }
       - name: Upload managed lifecycle diagnostics
