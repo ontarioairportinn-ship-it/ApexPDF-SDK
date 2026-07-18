@@ -8,7 +8,7 @@ private interfaces.
 
 ## Current status
 
-Slice 0 is in progress. The repository currently provides the native library
+Slice 0 is complete. The repository currently provides the native library
 foundation, a versioned C ABI, public headers, and C/C++ ABI smoke tests. It does
 not yet claim PDF parsing, rendering, editing, security, redaction, OCR, or
 validation capability.

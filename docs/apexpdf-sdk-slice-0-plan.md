@@ -1,6 +1,6 @@
 # ApexPDF SDK Slice 0 plan
 
-Status: in progress.
+Status: complete; exit gate closed 2026-07-17.
 
 ## Objective
 
@@ -37,7 +37,7 @@ Slice 0 is not complete until all master-prompt acceptance items have objective 
 
 ## Next recommended increment
 
-Run the complete CI workflow from a candidate commit, retain its evidence artifacts, and then close the Slice 0 exit audit.
+Begin the next planned slice only after its capability scope and acceptance tests are approved. Slice 0 establishes plumbing and makes no PDF-processing capability claim.
 
 ## Toolchain observation
 
