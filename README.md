@@ -48,6 +48,11 @@ and 99-test editor validation while reporting no PDF-processing capabilities
 and leaving the active provider unchanged. The integration result is recorded
 in `docs/integration/editor-gate-0-result.md`.
 
+Slice 2 is planned as a bounded structural parser and validator over the
+random-access stream ABI. Its scope, limits, proposed ABI 1.2 contract, and
+future editor shadow-validation handoff are documented under `docs/`. No Slice
+2 capability or editor artifact is currently published.
+
 The editor handoff contract is documented in
 `docs/integration/editor-gate-0-handoff.md`. Use
 `eng/New-EditorGate0Bundle.ps1` to assemble immutable native and managed
