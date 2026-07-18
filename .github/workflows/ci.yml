@@ -18,17 +18,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.302
-      - name: Configure Release
-        run: cmake --preset windows-x64-release
-      - name: Build Release
-        run: cmake --build --preset windows-x64-release
-      - name: Test C and C++ ABI consumers
-        run: ctest --preset windows-x64-release
-      - name: Package native SDK
-        shell: pwsh
+      - name: Build, test, and package native SDK with MSVC
+        shell: cmd
         run: |
-          $packageDirectory = (New-Item -ItemType Directory -Force artifacts/packages/native).FullName
-          cpack --preset windows-x64-release -B $packageDirectory
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSROOT=%%i"
+          call "%VSROOT%\Common7\Tools\VsDevCmd.bat" -arch=x64 -host_arch=x64
+          cmake --preset windows-x64-release
+          cmake --build --preset windows-x64-release
+          ctest --preset windows-x64-release
+          cpack --preset windows-x64-release -B "%CD%\artifacts\packages\native"
       - name: Build managed binding
         run: dotnet build tests/dotnet/ApexPdf.Sdk.ManagedTests/ApexPdf.Sdk.ManagedTests.csproj -c Release
       - name: Test managed safe-handle lifecycle
@@ -119,18 +117,23 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure AddressSanitizer
-        run: cmake --preset windows-x64-asan
-      - name: Build AddressSanitizer
-        run: cmake --build --preset windows-x64-asan
-      - name: Test AddressSanitizer
-        run: ctest --preset windows-x64-asan
+      - name: Build and test AddressSanitizer with MSVC
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSROOT=%%i"
+          call "%VSROOT%\Common7\Tools\VsDevCmd.bat" -arch=x64 -host_arch=x64
+          cmake --preset windows-x64-asan
+          cmake --build --preset windows-x64-asan
+          ctest --preset windows-x64-asan
 
   native-windows-x64-analysis:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure native analysis
-        run: cmake --preset windows-x64-analyze
-      - name: Run native analysis
-        run: cmake --build --preset windows-x64-analyze
+      - name: Run native analysis with MSVC
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSROOT=%%i"
+          call "%VSROOT%\Common7\Tools\VsDevCmd.bat" -arch=x64 -host_arch=x64
+          cmake --preset windows-x64-analyze
+          cmake --build --preset windows-x64-analyze
