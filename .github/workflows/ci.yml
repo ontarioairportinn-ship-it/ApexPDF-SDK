@@ -24,6 +24,8 @@ jobs:
         run: cmake --build --preset windows-x64-release
       - name: Test C and C++ ABI consumers
         run: ctest --preset windows-x64-release
+      - name: Package native SDK
+        run: cpack --preset windows-x64-release
       - name: Build managed binding
         run: dotnet build tests/dotnet/ApexPdf.Sdk.ManagedTests/ApexPdf.Sdk.ManagedTests.csproj -c Release
       - name: Test managed safe-handle lifecycle
@@ -33,7 +35,10 @@ jobs:
           New-Item -ItemType File -Force artifacts/evidence/managed-markers.txt | Out-Null
           New-Item -ItemType File -Force artifacts/evidence/managed-console.txt | Out-Null
           "shell-start" | Add-Content artifacts/evidence/managed-markers.txt
-          $native = Get-Item artifacts/windows-x64-release/stage/native/ApexPdfSdk.dll
+          $nativePackage = Get-ChildItem artifacts/windows-x64-release/ApexPdfSdk-*.zip | Select-Object -First 1
+          Expand-Archive $nativePackage.FullName artifacts/managed-native-package -Force
+          $native = Get-ChildItem artifacts/managed-native-package -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
+          if ($null -eq $native) { throw "The native SDK package does not contain ApexPdfSdk.dll." }
           "native=$($native.FullName)" | Add-Content artifacts/evidence/managed-markers.txt
           "assembly-exists=$(Test-Path tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll)" | Add-Content artifacts/evidence/managed-markers.txt
           "dotnet=$((Get-Command dotnet).Source)" | Add-Content artifacts/evidence/managed-markers.txt
@@ -68,12 +73,11 @@ jobs:
           "configure=cmake --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
           "build=cmake --build --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
           "test=ctest --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
-      - name: Package native SDK
-        run: cpack --preset windows-x64-release
       - name: Package managed SDK
         shell: pwsh
         run: |
-          $native = Get-Item artifacts/windows-x64-release/stage/native/ApexPdfSdk.dll
+          $native = Get-ChildItem artifacts/managed-native-package -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
+          if ($null -eq $native) { throw "The extracted native SDK package does not contain ApexPdfSdk.dll." }
           dotnet pack src/dotnet/ApexPdf.Sdk/ApexPdf.Sdk.csproj -c Release --no-build -p:ApexPdfNativeRoot="$($native.DirectoryName)" -o artifacts/packages
       - name: Test packaged C and C++ consumers
         shell: pwsh
