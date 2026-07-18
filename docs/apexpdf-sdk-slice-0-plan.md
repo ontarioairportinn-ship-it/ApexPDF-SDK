@@ -27,12 +27,18 @@ Slice 0 is not complete until all master-prompt acceptance items have objective 
 - Added AddressSanitizer and MSVC native-analysis presets plus an independent SDK Windows CI workflow.
 - Added C and C++ ABI smoke tests covering allocation balance, lifecycle events, cancellation, progress bounds, and stream bounds.
 - Added initial ABI/ownership/threading documentation and an approved-dependency register.
+- Added a standards/conformance register and an explicit no-claims implementation matrix.
+- Added exact Windows DLL export auditing and a 10,000-iteration lifecycle/allocation-balance stress test.
+- Added security, contribution, and immutable-release policies with a release checklist.
+- Added packaged SPDX 2.3 SBOM and explicit third-party notices.
+- Added a deterministic checked-in stream fuzz corpus replay harness and CI toolchain-evidence capture.
+- Added isolated C and C++ consumers that configure, build, and execute solely from the packaged SDK ZIP.
 - Recorded the integration/migration gap without claiming parser or rendering support.
 
 ## Next recommended increment
 
-Add the standards register, symbol/ABI export auditing, and an initialization stress/leak test before auditing the remaining Slice 0 gate.
+Run the complete CI workflow from a candidate commit, retain its evidence artifacts, and then close the Slice 0 exit audit.
 
 ## Toolchain observation
 
-With MSVC 19.51, the C++ header smoke executable deadlocks during AddressSanitizer runtime shutdown when it loads the instrumented SDK DLL. The instrumented C lifecycle test passes and covers allocation, cancellation, stream, and shutdown behavior; the C++ target still compiles under the sanitizer preset and runs under Debug and Release. This test-host limitation remains recorded and must be rechecked after a toolchain update rather than hidden or treated as SDK capability evidence.
+With MSVC 19.51, additional test hosts that load the instrumented SDK DLL (the C++ header smoke test, lifecycle stress test, and corpus replay harness) fail during AddressSanitizer runtime shutdown. The instrumented C ABI lifecycle test passes and covers allocation, cancellation, stream, and shutdown behavior; the additional targets still compile with instrumentation and run under Debug and Release. This test-host limitation remains recorded and must be rechecked after a toolchain update rather than hidden or treated as SDK capability evidence.

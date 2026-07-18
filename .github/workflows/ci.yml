@@ -21,13 +21,37 @@ jobs:
         run: cmake --build --preset windows-x64-release
       - name: Test C and C++ ABI consumers
         run: ctest --preset windows-x64-release
+      - name: Record toolchain evidence
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts/evidence | Out-Null
+          cmake --version | Out-File artifacts/evidence/toolchain.txt
+          cl 2>&1 | Select-Object -First 3 | Out-File artifacts/evidence/toolchain.txt -Append
+          "architecture=x64" | Out-File artifacts/evidence/toolchain.txt -Append
+          "configure=cmake --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
+          "build=cmake --build --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
+          "test=ctest --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
       - name: Package native SDK
         run: cpack --preset windows-x64-release
+      - name: Test packaged C and C++ consumers
+        shell: pwsh
+        run: |
+          $package = Get-ChildItem artifacts/windows-x64-release/ApexPdfSdk-*.zip | Select-Object -First 1
+          ./tests/Test-PackageConsumer.ps1 -Package $package.FullName -WorkDirectory artifacts/package-consumer
+      - name: Record package hash
+        shell: pwsh
+        run: Get-FileHash artifacts/windows-x64-release/ApexPdfSdk-*.zip -Algorithm SHA256 | Format-List | Out-File artifacts/evidence/package-sha256.txt
       - name: Upload native SDK package
         uses: actions/upload-artifact@v4
         with:
           name: ApexPdfSdk-windows-x64
           path: artifacts/windows-x64-release/ApexPdfSdk-*.zip
+          if-no-files-found: error
+      - name: Upload release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ApexPdfSdk-windows-x64-evidence
+          path: artifacts/evidence/
           if-no-files-found: error
 
   native-windows-x64-asan:

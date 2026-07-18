@@ -6,6 +6,14 @@ include(GNUInstallDirs)
 
 option(APX_ENABLE_ASAN "Enable AddressSanitizer for ApexPDF SDK targets" OFF)
 option(APX_ENABLE_STATIC_ANALYSIS "Enable MSVC native static analysis" OFF)
+option(APX_BUILD_FUZZERS "Build deterministic fuzz-harness replay targets" ON)
+
+set(APX_GENERATED_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated")
+file(MAKE_DIRECTORY "${APX_GENERATED_DIRECTORY}")
+configure_file(cmake/apexpdf-sdk.spdx.json.in
+    "${APX_GENERATED_DIRECTORY}/apexpdf-sdk.spdx.json" @ONLY)
+configure_file(THIRD_PARTY_NOTICES.txt
+    "${APX_GENERATED_DIRECTORY}/THIRD_PARTY_NOTICES.txt" COPYONLY)
 
 add_library(ApexPdfSdk SHARED
     src/abi/apexpdf.cpp)
@@ -36,6 +44,15 @@ install(TARGETS ApexPdfSdk
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES
+    "${APX_GENERATED_DIRECTORY}/apexpdf-sdk.spdx.json"
+    "${APX_GENERATED_DIRECTORY}/THIRD_PARTY_NOTICES.txt"
+    DESTINATION share/ApexPdfSdk)
+install(FILES
+    docs/api/c-abi.md
+    docs/dependencies/approved-dependencies.md
+    docs/standards/standards-register.md
+    DESTINATION share/ApexPdfSdk/docs)
 
 set(CPACK_GENERATOR ZIP)
 set(CPACK_PACKAGE_NAME "ApexPdfSdk")
@@ -62,5 +79,49 @@ if(BUILD_TESTING)
         # test exercises the instrumented DLL; this target still compiles to
         # enforce C++ header compatibility and runs in Debug/Release presets.
         set_tests_properties(ApexPdfSdk.CppHeaderTests PROPERTIES DISABLED TRUE)
+    endif()
+
+    add_executable(ApexPdfSdk.LifecycleStressTests tests/lifecycle_stress_tests.c)
+    target_link_libraries(ApexPdfSdk.LifecycleStressTests PRIVATE ApexPdfSdk)
+    if(MSVC AND APX_ENABLE_ASAN)
+        target_compile_options(ApexPdfSdk.LifecycleStressTests PRIVATE /fsanitize=address)
+        target_link_options(ApexPdfSdk.LifecycleStressTests PRIVATE /fsanitize=address)
+    endif()
+    add_test(NAME ApexPdfSdk.LifecycleStressTests COMMAND ApexPdfSdk.LifecycleStressTests)
+    if(MSVC AND APX_ENABLE_ASAN)
+        # The same MSVC 19.51 instrumented-DLL shutdown defect documented for
+        # the C++ host also affects this long-running test. The instrumented
+        # ABI test remains the sanitizer lifecycle gate; the stress test runs
+        # under Debug and Release until the toolchain defect is resolved.
+        set_tests_properties(ApexPdfSdk.LifecycleStressTests PROPERTIES DISABLED TRUE)
+    endif()
+
+    if(MSVC)
+        get_filename_component(APX_MSVC_TOOL_DIRECTORY "${CMAKE_C_COMPILER}" DIRECTORY)
+        set(APX_DUMPBIN "${APX_MSVC_TOOL_DIRECTORY}/dumpbin.exe")
+        add_test(
+            NAME ApexPdfSdk.ExportedSymbols
+            COMMAND ${CMAKE_COMMAND}
+                -DDUMPBIN=${APX_DUMPBIN}
+                -DLIBRARY=$<TARGET_FILE:ApexPdfSdk>
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/audit_exports.cmake)
+    endif()
+
+    if(APX_BUILD_FUZZERS)
+        add_executable(ApexPdfSdk.StreamFuzzReplay tests/fuzz/stream_fuzz_replay.c)
+        target_link_libraries(ApexPdfSdk.StreamFuzzReplay PRIVATE ApexPdfSdk)
+        target_compile_definitions(ApexPdfSdk.StreamFuzzReplay PRIVATE
+            APX_FUZZ_CORPUS_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/tests/fuzz/corpus/stream")
+        if(MSVC AND APX_ENABLE_ASAN)
+            target_compile_options(ApexPdfSdk.StreamFuzzReplay PRIVATE /fsanitize=address)
+            target_link_options(ApexPdfSdk.StreamFuzzReplay PRIVATE /fsanitize=address)
+        endif()
+        add_test(NAME ApexPdfSdk.StreamFuzzReplay COMMAND ApexPdfSdk.StreamFuzzReplay)
+        if(MSVC AND APX_ENABLE_ASAN)
+            # MSVC 19.51 cannot reliably shut down additional hosts that load
+            # this instrumented DLL. Keep the target instrumented and built;
+            # the ABI test remains the executable sanitizer gate.
+            set_tests_properties(ApexPdfSdk.StreamFuzzReplay PROPERTIES DISABLED TRUE)
+        endif()
     endif()
 endif()

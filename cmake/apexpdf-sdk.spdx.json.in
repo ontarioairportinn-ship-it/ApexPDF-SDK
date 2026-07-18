@@ -1,0 +1,27 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "name": "ApexPdfSdk-@PROJECT_VERSION@",
+  "documentNamespace": "https://apexpdf.invalid/spdx/ApexPdfSdk/@PROJECT_VERSION@",
+  "creationInfo": {
+    "created": "2026-07-17T00:00:00Z",
+    "creators": ["Organization: ApexPDF", "Tool: CMake-@CMAKE_VERSION@"]
+  },
+  "packages": [{
+    "SPDXID": "SPDXRef-Package-ApexPdfSdk",
+    "name": "ApexPdfSdk",
+    "versionInfo": "@PROJECT_VERSION@",
+    "downloadLocation": "NOASSERTION",
+    "filesAnalyzed": false,
+    "licenseConcluded": "NOASSERTION",
+    "licenseDeclared": "NOASSERTION",
+    "copyrightText": "NOASSERTION",
+    "primaryPackagePurpose": "LIBRARY"
+  }],
+  "relationships": [{
+    "spdxElementId": "SPDXRef-DOCUMENT",
+    "relationshipType": "DESCRIBES",
+    "relatedSpdxElement": "SPDXRef-Package-ApexPdfSdk"
+  }]
+}

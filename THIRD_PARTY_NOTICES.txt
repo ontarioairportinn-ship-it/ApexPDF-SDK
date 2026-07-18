@@ -1,0 +1,9 @@
+ApexPDF SDK third-party notices
+================================
+
+The Slice 0 ApexPDF SDK library contains no third-party production runtime
+components. Build and test tools are not redistributed in the SDK package.
+
+This file must be regenerated and reviewed whenever the approved-dependency
+register changes. An empty runtime-notice set is an explicit reviewed state,
+not permission to omit future notices.

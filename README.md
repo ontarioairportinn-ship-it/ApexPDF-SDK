@@ -34,4 +34,10 @@ the CMake project. The public native ABI version is tracked separately in
 
 See `docs/apexpdf-sdk-slice-0-plan.md` and
 `docs/apexpdf-sdk-gap-analysis.md` for the staged implementation plan and known
-limitations.
+limitations. Standards and conformance claims are governed by
+`docs/standards/standards-register.md`.
+
+Packaged releases include an SPDX SBOM and third-party notices. Release and
+security requirements are recorded under `docs/release/` and `docs/security/`.
+The current exit-gate evidence and unresolved toolchain limitation are recorded
+in `docs/release/slice-0-exit-audit.md`.
