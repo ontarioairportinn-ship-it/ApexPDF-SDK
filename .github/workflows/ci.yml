@@ -30,18 +30,19 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force artifacts/evidence | Out-Null
-          New-Item -ItemType File -Force artifacts/evidence/managed-lifecycle.txt | Out-Null
+          New-Item -ItemType File -Force artifacts/evidence/managed-markers.txt | Out-Null
+          New-Item -ItemType File -Force artifacts/evidence/managed-console.txt | Out-Null
           Copy-Item artifacts/windows-x64-release/ApexPdfSdk.dll tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/
-          $env:APX_MANAGED_TEST_LOG = (Resolve-Path artifacts/evidence/managed-lifecycle.txt).Path
+          $env:APX_MANAGED_TEST_LOG = (Resolve-Path artifacts/evidence/managed-markers.txt).Path
           dotnet tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll *>&1 |
-            Tee-Object artifacts/evidence/managed-lifecycle.txt
+            Tee-Object artifacts/evidence/managed-console.txt
           if ($LASTEXITCODE -ne 0) { throw "Managed lifecycle test failed: $LASTEXITCODE" }
       - name: Upload managed lifecycle diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ApexPdfSdk-managed-lifecycle-diagnostics
-          path: artifacts/evidence/managed-lifecycle.txt
+          path: artifacts/evidence/managed-*.txt
           if-no-files-found: error
       - name: Record toolchain evidence
         shell: pwsh
