@@ -42,6 +42,9 @@ jobs:
           "package=$($nativePackage.FullName)" | Add-Content artifacts/evidence/managed-markers.txt
           Expand-Archive $nativePackage.FullName artifacts/managed-native-package -Force
           "extract-complete" | Add-Content artifacts/evidence/managed-markers.txt
+          Get-ChildItem artifacts/managed-native-package -Recurse -File |
+            ForEach-Object { "package-file=$($_.FullName)" } |
+            Add-Content artifacts/evidence/managed-markers.txt
           $native = Get-ChildItem artifacts/managed-native-package -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
           "native-search-complete" | Add-Content artifacts/evidence/managed-markers.txt
           if ($null -eq $native) { throw "The native SDK package does not contain ApexPdfSdk.dll." }
