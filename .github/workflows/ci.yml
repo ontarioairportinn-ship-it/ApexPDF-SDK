@@ -33,8 +33,7 @@ jobs:
           New-Item -ItemType File -Force artifacts/evidence/managed-markers.txt | Out-Null
           New-Item -ItemType File -Force artifacts/evidence/managed-console.txt | Out-Null
           "shell-start" | Add-Content artifacts/evidence/managed-markers.txt
-          $native = Get-ChildItem artifacts/windows-x64-release -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
-          if ($null -eq $native) { throw "ApexPdfSdk.dll was not produced by the native build." }
+          $native = Get-Item artifacts/windows-x64-release/stage/native/ApexPdfSdk.dll
           "native=$($native.FullName)" | Add-Content artifacts/evidence/managed-markers.txt
           "assembly-exists=$(Test-Path tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll)" | Add-Content artifacts/evidence/managed-markers.txt
           "dotnet=$((Get-Command dotnet).Source)" | Add-Content artifacts/evidence/managed-markers.txt
@@ -74,8 +73,7 @@ jobs:
       - name: Package managed SDK
         shell: pwsh
         run: |
-          $native = Get-ChildItem artifacts/windows-x64-release -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
-          if ($null -eq $native) { throw "ApexPdfSdk.dll was not produced by the native build." }
+          $native = Get-Item artifacts/windows-x64-release/stage/native/ApexPdfSdk.dll
           dotnet pack src/dotnet/ApexPdf.Sdk/ApexPdf.Sdk.csproj -c Release --no-build -p:ApexPdfNativeRoot="$($native.DirectoryName)" -o artifacts/packages
       - name: Test packaged C and C++ consumers
         shell: pwsh
