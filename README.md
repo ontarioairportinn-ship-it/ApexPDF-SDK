@@ -41,3 +41,8 @@ Packaged releases include an SPDX SBOM and third-party notices. Release and
 security requirements are recorded under `docs/release/` and `docs/security/`.
 The current exit-gate evidence and unresolved toolchain limitation are recorded
 in `docs/release/slice-0-exit-audit.md`.
+
+Slice 1 is adding the first editor-integration seam: a `net10.0` managed
+safe-handle package for lifecycle, version, ABI, and truthful capability
+probing. It currently reports no PDF-processing capabilities and does not
+replace the editor's active provider.

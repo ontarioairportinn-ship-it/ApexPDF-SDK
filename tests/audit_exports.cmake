@@ -24,6 +24,7 @@ set(expected
     apx_library_destroy
     apx_operation_check
     apx_operation_report_progress
+    apx_owned_capabilities
     apx_sdk_version
     apx_status_name
     apx_stream_get_size

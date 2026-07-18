@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>ApexPdf.Sdk</AssemblyName>
+    <RootNamespace>ApexPdf.Sdk</RootNamespace>
+    <PackageId>ApexPdf.Sdk</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>ApexPDF</Authors>
+    <Description>Safe managed lifecycle and capability bindings for the ApexPDF SDK.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
+    <None Include="LICENSE.txt" Pack="true" PackagePath="/" />
+    <None Include="$(ApexPdfNativeRoot)\ApexPdfSdk.dll"
+          Condition="Exists('$(ApexPdfNativeRoot)\ApexPdfSdk.dll')"
+          Pack="true" PackagePath="runtimes/win-x64/native/" />
+  </ItemGroup>
+  <Target Name="RequireNativePackageAsset" BeforeTargets="Pack">
+    <Error Condition="!Exists('$(ApexPdfNativeRoot)\ApexPdfSdk.dll')"
+           Text="Set ApexPdfNativeRoot to the Release directory containing ApexPdfSdk.dll." />
+  </Target>
+</Project>

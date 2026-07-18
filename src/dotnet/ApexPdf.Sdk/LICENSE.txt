@@ -1,0 +1,5 @@
+Copyright (c) 2026 ApexPDF. All rights reserved.
+
+Use and redistribution of this software are governed by the applicable
+ApexPDF commercial license agreement. No rights are granted except as stated
+in that agreement.

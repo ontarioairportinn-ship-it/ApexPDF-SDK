@@ -20,6 +20,7 @@ typedef struct apx_library_options {
 
 APX_API apx_version APX_CALL apx_sdk_version(void);
 APX_API apx_version APX_CALL apx_abi_version(void);
+APX_API apx_capabilities APX_CALL apx_owned_capabilities(void);
 APX_API const char* APX_CALL apx_status_name(apx_status status);
 APX_API apx_status APX_CALL apx_library_create(
     const apx_library_options* options,

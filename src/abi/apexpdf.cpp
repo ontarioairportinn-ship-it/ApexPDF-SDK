@@ -47,6 +47,10 @@ apx_version APX_CALL apx_abi_version(void) {
     return {APX_ABI_VERSION_MAJOR, APX_ABI_VERSION_MINOR, 0U};
 }
 
+apx_capabilities APX_CALL apx_owned_capabilities(void) {
+    return APX_CAPABILITY_NONE;
+}
+
 const char* APX_CALL apx_status_name(apx_status status) {
     switch (status) {
         case APX_STATUS_OK: return "ok";

@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 typedef int32_t apx_status;
+typedef uint64_t apx_capabilities;
 
 enum {
     APX_STATUS_OK = 0,
@@ -33,6 +34,17 @@ enum {
     APX_STATUS_CANCELLED = 7,
     APX_STATUS_IO_ERROR = 8,
     APX_STATUS_OUT_OF_RANGE = 9
+};
+
+enum {
+    APX_CAPABILITY_NONE = 0,
+    APX_CAPABILITY_PARSE = UINT64_C(1) << 0,
+    APX_CAPABILITY_PRESERVE = UINT64_C(1) << 1,
+    APX_CAPABILITY_RENDER = UINT64_C(1) << 2,
+    APX_CAPABILITY_EXTRACT_TEXT = UINT64_C(1) << 3,
+    APX_CAPABILITY_EDIT = UINT64_C(1) << 4,
+    APX_CAPABILITY_WRITE = UINT64_C(1) << 5,
+    APX_CAPABILITY_VALIDATE = UINT64_C(1) << 6
 };
 
 typedef struct apx_version {

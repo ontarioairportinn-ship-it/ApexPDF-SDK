@@ -103,6 +103,7 @@ int main(void) {
     }
 
     assert(apx_sdk_version().major == APX_SDK_VERSION_MAJOR);
+    assert(apx_owned_capabilities() == APX_CAPABILITY_NONE);
     assert(apx_library_create(NULL, &library) == APX_STATUS_INVALID_ARGUMENT);
     assert(apx_library_create(&options, NULL) == APX_STATUS_INVALID_ARGUMENT);
     assert(apx_library_create(&options, &library) == APX_STATUS_OK);

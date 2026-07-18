@@ -1,6 +1,6 @@
 # ApexPDF SDK C ABI
 
-Status: Slice 0 foundation; ABI 1.0.
+Status: Slice 1 integration foundation; ABI 1.1.
 
 ## Compatibility
 
@@ -32,4 +32,4 @@ The SDK may issue reads from worker threads in later slices. A stream shared acr
 
 ## Current capability boundary
 
-These APIs establish lifecycle and operation plumbing only. ABI 1.0 does not yet claim PDF parsing, rendering, text extraction, editing, encryption, validation, or save support.
+`apx_owned_capabilities` returns only capabilities backed by owned implementation and acceptance evidence. ABI 1.1 returns `APX_CAPABILITY_NONE`; it does not claim PDF parsing, preservation, rendering, text extraction, editing, writing, encryption, or validation support.

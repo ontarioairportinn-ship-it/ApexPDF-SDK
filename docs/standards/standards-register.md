@@ -26,6 +26,7 @@ Normative documents must be obtained through licensed or authorized sources. The
 | Capability | Parse | Preserve | Render | Extract | Edit/write | Validate |
 |---|---:|---:|---:|---:|---:|---:|
 | Library lifecycle and ABI plumbing | N/A | N/A | N/A | N/A | N/A | Tested |
+| Owned capability discovery | N/A | N/A | N/A | N/A | N/A | Tested; reports none |
 | PDF file structure | No | No | No | No | No | No |
 | Page content and graphics | No | No | No | No | No | No |
 | Fonts and text | No | No | No | No | No | No |
