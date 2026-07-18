@@ -36,8 +36,11 @@ jobs:
           New-Item -ItemType File -Force artifacts/evidence/managed-console.txt | Out-Null
           "shell-start" | Add-Content artifacts/evidence/managed-markers.txt
           $nativePackage = Get-ChildItem artifacts/packages/native/ApexPdfSdk-*.zip | Select-Object -First 1
+          "package=$($nativePackage.FullName)" | Add-Content artifacts/evidence/managed-markers.txt
           Expand-Archive $nativePackage.FullName artifacts/managed-native-package -Force
+          "extract-complete" | Add-Content artifacts/evidence/managed-markers.txt
           $native = Get-ChildItem artifacts/managed-native-package -Recurse -Filter ApexPdfSdk.dll | Select-Object -First 1
+          "native-search-complete" | Add-Content artifacts/evidence/managed-markers.txt
           if ($null -eq $native) { throw "The native SDK package does not contain ApexPdfSdk.dll." }
           "native=$($native.FullName)" | Add-Content artifacts/evidence/managed-markers.txt
           "assembly-exists=$(Test-Path tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll)" | Add-Content artifacts/evidence/managed-markers.txt
