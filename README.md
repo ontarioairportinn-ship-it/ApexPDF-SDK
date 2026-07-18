@@ -46,3 +46,8 @@ Slice 1 is adding the first editor-integration seam: a `net10.0` managed
 safe-handle package for lifecycle, version, ABI, and truthful capability
 probing. It currently reports no PDF-processing capabilities and does not
 replace the editor's active provider.
+
+The editor handoff contract is documented in
+`docs/integration/editor-gate-0-handoff.md`. Use
+`eng/New-EditorGate0Bundle.ps1` to assemble immutable native and managed
+packages, hashes, a machine-readable manifest, and the feedback template.
