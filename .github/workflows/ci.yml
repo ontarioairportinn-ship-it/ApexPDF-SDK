@@ -26,7 +26,14 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force artifacts/evidence | Out-Null
           cmake --version | Out-File artifacts/evidence/toolchain.txt
-          cl 2>&1 | Select-Object -First 3 | Out-File artifacts/evidence/toolchain.txt -Append
+          Get-Content artifacts/windows-x64-release/CMakeCache.txt |
+            Where-Object { $_ -match '^CMAKE_(C|CXX)_COMPILER:' } |
+            Out-File artifacts/evidence/toolchain.txt -Append
+          Get-ChildItem artifacts/windows-x64-release/CMakeFiles -Recurse -Filter CMakeCCompiler.cmake |
+            Select-Object -First 1 |
+            Get-Content |
+            Select-String 'CMAKE_C_COMPILER_VERSION|CMAKE_C_COMPILER_ARCHITECTURE_ID' |
+            Out-File artifacts/evidence/toolchain.txt -Append
           "architecture=x64" | Out-File artifacts/evidence/toolchain.txt -Append
           "configure=cmake --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
           "build=cmake --build --preset windows-x64-release" | Out-File artifacts/evidence/toolchain.txt -Append
