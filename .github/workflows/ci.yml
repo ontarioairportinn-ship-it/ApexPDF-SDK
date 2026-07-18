@@ -32,8 +32,14 @@ jobs:
           New-Item -ItemType Directory -Force artifacts/evidence | Out-Null
           New-Item -ItemType File -Force artifacts/evidence/managed-markers.txt | Out-Null
           New-Item -ItemType File -Force artifacts/evidence/managed-console.txt | Out-Null
+          "shell-start" | Add-Content artifacts/evidence/managed-markers.txt
+          "native-exists=$(Test-Path artifacts/windows-x64-release/ApexPdfSdk.dll)" | Add-Content artifacts/evidence/managed-markers.txt
+          "assembly-exists=$(Test-Path tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll)" | Add-Content artifacts/evidence/managed-markers.txt
+          "dotnet=$((Get-Command dotnet).Source)" | Add-Content artifacts/evidence/managed-markers.txt
           Copy-Item artifacts/windows-x64-release/ApexPdfSdk.dll tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/
+          "copy-complete" | Add-Content artifacts/evidence/managed-markers.txt
           $env:APX_MANAGED_TEST_LOG = (Resolve-Path artifacts/evidence/managed-markers.txt).Path
+          "launch" | Add-Content artifacts/evidence/managed-markers.txt
           dotnet tests/dotnet/ApexPdf.Sdk.ManagedTests/bin/Release/net10.0/ApexPdf.Sdk.ManagedTests.dll *>&1 |
             Tee-Object artifacts/evidence/managed-console.txt
           if ($LASTEXITCODE -ne 0) { throw "Managed lifecycle test failed: $LASTEXITCODE" }
