@@ -42,10 +42,11 @@ security requirements are recorded under `docs/release/` and `docs/security/`.
 The current exit-gate evidence and unresolved toolchain limitation are recorded
 in `docs/release/slice-0-exit-audit.md`.
 
-Slice 1 is adding the first editor-integration seam: a `net10.0` managed
-safe-handle package for lifecycle, version, ABI, and truthful capability
-probing. It currently reports no PDF-processing capabilities and does not
-replace the editor's active provider.
+Slice 1 and Editor Integration Gate 0 are complete. The `net10.0` managed
+safe-handle package passed worker/AppContainer, MSIX, clean-machine, rollback,
+and 99-test editor validation while reporting no PDF-processing capabilities
+and leaving the active provider unchanged. The integration result is recorded
+in `docs/integration/editor-gate-0-result.md`.
 
 The editor handoff contract is documented in
 `docs/integration/editor-gate-0-handoff.md`. Use
