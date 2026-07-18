@@ -1,21 +1,47 @@
 using ApexPdf.Sdk;
+using System.Runtime.InteropServices;
 
-if (ApexPdfLibrary.SdkVersion != new ApexPdfVersion(0, 1, 0))
+string? diagnosticPath = Environment.GetEnvironmentVariable("APX_MANAGED_TEST_LOG");
+void Mark(string message)
 {
-    throw new InvalidOperationException($"Unexpected SDK version: {ApexPdfLibrary.SdkVersion}");
+    if (diagnosticPath is not null)
+    {
+        File.AppendAllText(diagnosticPath, $"{DateTimeOffset.UtcNow:O} {message}{Environment.NewLine}");
+    }
 }
 
-if (ApexPdfLibrary.AbiVersion != new ApexPdfVersion(1, 1, 0))
+try
 {
-    throw new InvalidOperationException($"Unexpected ABI version: {ApexPdfLibrary.AbiVersion}");
-}
+    Mark($"start framework={Environment.Version} architecture={RuntimeInformation.ProcessArchitecture}");
+    ApexPdfVersion sdkVersion = ApexPdfLibrary.SdkVersion;
+    Mark($"sdk-version={sdkVersion}");
+    if (sdkVersion != new ApexPdfVersion(0, 1, 0))
+    {
+        throw new InvalidOperationException($"Unexpected SDK version: {sdkVersion}");
+    }
 
-if (ApexPdfLibrary.OwnedCapabilities != ApexPdfCapabilities.None)
-{
-    throw new InvalidOperationException("Slice 1 binding must not claim PDF-processing capabilities.");
-}
+    ApexPdfVersion abiVersion = ApexPdfLibrary.AbiVersion;
+    Mark($"abi-version={abiVersion}");
+    if (abiVersion != new ApexPdfVersion(1, 1, 0))
+    {
+        throw new InvalidOperationException($"Unexpected ABI version: {abiVersion}");
+    }
 
-for (int iteration = 0; iteration < 1_000; iteration++)
+    ApexPdfCapabilities capabilities = ApexPdfLibrary.OwnedCapabilities;
+    Mark($"capabilities={capabilities}");
+    if (capabilities != ApexPdfCapabilities.None)
+    {
+        throw new InvalidOperationException("Slice 1 binding must not claim PDF-processing capabilities.");
+    }
+
+    for (int iteration = 0; iteration < 1_000; iteration++)
+    {
+        using ApexPdfLibrary library = ApexPdfLibrary.Create();
+    }
+    Mark("complete iterations=1000");
+}
+catch (Exception exception)
 {
-    using ApexPdfLibrary library = ApexPdfLibrary.Create();
+    Mark($"failure {exception}");
+    throw;
 }
