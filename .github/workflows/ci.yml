@@ -25,7 +25,10 @@ jobs:
       - name: Test C and C++ ABI consumers
         run: ctest --preset windows-x64-release
       - name: Package native SDK
-        run: cpack --preset windows-x64-release -B artifacts/packages/native
+        shell: pwsh
+        run: |
+          $packageDirectory = (New-Item -ItemType Directory -Force artifacts/packages/native).FullName
+          cpack --preset windows-x64-release -B $packageDirectory
       - name: Build managed binding
         run: dotnet build tests/dotnet/ApexPdf.Sdk.ManagedTests/ApexPdf.Sdk.ManagedTests.csproj -c Release
       - name: Test managed safe-handle lifecycle
